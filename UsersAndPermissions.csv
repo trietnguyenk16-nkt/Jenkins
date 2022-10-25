@@ -1,0 +1,3 @@
+﻿User,ADMINISTER,Overall - Read,Credentials - Create,Credentials - Delete,Credentials - ManageDomains,Credentials - Update,Credentials - View,Agent - Build,Agent - Configure,Agent - Connect,Agent - Create,Agent - Delete,Agent - Disconnect,Job - Build,Job - Cancel,Job - Configure,Job - Create,Job - Delete,Job - Discover,Job - Read,Job - Workspace,Run - Delete,Run - Reply,Run - Update,View - Configure,View - Create,View - Delete,View - Read
+User1,Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N
+User2,,,,,,Y,,Y,,,,,,Y,,,,,,,,,,,,,,

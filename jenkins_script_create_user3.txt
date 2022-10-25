@@ -1,0 +1,127 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException; 
+import jenkins.model.*
+import hudson.security.*
+import jenkins.*
+import hudson.*
+
+//NOTE: Manage Jenkins -> Configure Global Security -> Authorization ->  Project-based Matrix Authorization Strategy
+
+def filePath = "C:\\UsersAndPermissions.csv"
+def defaultPassword = "12345678x@X"
+def line = ""; 
+def splitBy = ",";  
+def instance = Jenkins.getInstance()
+
+AuthorizationStrategy strategy = Jenkins.get().getAuthorizationStrategy();
+def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+
+//parsing a CSV file into BufferedReader class constructor  
+BufferedReader br = new BufferedReader(new FileReader(filePath));  
+
+line = br.readLine()
+String[] headers = line.split(splitBy)
+
+while ((line = br.readLine()) != null)   //returns a Boolean value  
+{  
+	String[] usersAndPermissions = line.split(splitBy); // use comma as separator
+	
+	//create user
+	user = usersAndPermissions[0]
+	hudsonRealm.createAccount(user,defaultPassword)
+	instance.setSecurityRealm(hudsonRealm)
+	instance.save()
+	
+    for(int i = 1; i < usersAndPermissions.length; i++) {
+      if(usersAndPermissions[i].equalsIgnoreCase("Y")) {
+       switch(headers[i]) {
+		  case "ADMINISTER": 
+				strategy.add(Jenkins.ADMINISTER, user);
+				break;
+		  case "Overall - Read":  
+				strategy.add(hudson.model.Hudson.READ, user);
+				break;
+		  case "Credentials - Create": 
+				strategy.add(com.cloudbees.plugins.credentials.CredentialsProvider.CREATE, user);
+				break;
+		  case "Credentials - Delete": 
+				strategy.add(com.cloudbees.plugins.credentials.CredentialsProvider.DELETE, user);
+				break;
+		  case "Credentials - ManageDomains":
+				strategy.add(com.cloudbees.plugins.credentials.CredentialsProvider.MANAGE_DOMAINS, user);
+				break;
+		  case "Credentials - Update":
+				strategy.add(com.cloudbees.plugins.credentials.CredentialsProvider.UPDATE, user);
+				break;
+		  case "Credentials - View":
+				strategy.add(com.cloudbees.plugins.credentials.CredentialsProvider.VIEW, user);
+				break;
+		  case "Agent - Build":
+				strategy.add(hudson.model.Computer.BUILD, user);
+				break;
+		  case "Agent - Configure":
+				strategy.add(hudson.model.Computer.CONFIGURE, user);
+				break;
+		  case "Agent - Connect":
+				strategy.add(hudson.model.Computer.CONNECT, user);
+				break;
+		  case "Agent - Create":
+				strategy.add(hudson.model.Computer.CREATE, user);
+				break;
+		  case "Agent - Delete":
+				strategy.add(hudson.model.Computer.DELETE, user);
+				break;
+		  case "Agent - Disconnect":
+				strategy.add(hudson.model.Computer.DISCONNECT, user);
+				break;
+		  case "Job - Build":
+				strategy.add(hudson.model.Item.BUILD, user);
+				break;
+		  case "Job - Cancel":
+				strategy.add(hudson.model.Item.CANCEL, user);
+				break;
+		  case "Job - Configure":
+				strategy.add(hudson.model.Item.CONFIGURE, user);
+				break;
+		  case "Job - Create":
+				strategy.add(hudson.model.Item.CREATE, user);
+				break;
+		 case "Job - Delete":
+				strategy.add(hudson.model.Item.DELETE, user);
+				break;
+		case "Job - Discover":
+				strategy.add(hudson.model.Item.DISCOVER, user);
+				break;
+		case "Job - Read":
+				strategy.add(hudson.model.Item.READ, user);
+				break;
+		case "Job - Workspace":
+				strategy.add(hudson.model.Item.WORKSPACE, user);
+				break;
+		case "Run - Delete":
+				strategy.add(hudson.model.Run.DELETE, user);
+				break;
+		case "Run - Update":
+				strategy.add(hudson.model.Run.UPDATE, user);
+				break;
+		case "View - Configure":
+				strategy.add(hudson.model.View.CONFIGURE, user);
+				break;
+		case "View - Create":
+				strategy.add(hudson.model.View.CREATE, user);
+				break;
+		case "View - Delete":
+				strategy.add(hudson.model.View.DELETE, user);
+				break;
+		case "View - Read":
+				strategy.add(hudson.model.View.READ, user);
+				break;
+		default:
+				break;
+		}
+      }
+	}
+	instance.setAuthorizationStrategy(strategy)
+	instance.save()
+} 
